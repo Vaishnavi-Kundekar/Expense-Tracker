@@ -1,2 +1,2 @@
 # Expense-Tracker
-The Markdown Blog App is a sleek, minimalist platform designed for writers, developers, and content creators who love the simplicity and power of Markdown. Whether you're publishing technical tutorials, personal reflections, or professional articles, this app makes writing and sharing effortless.
+Take control of your finances with the Expense Tracker App — your smart companion for budgeting, saving, and spending wisely. Whether you're managing daily expenses, planning for a big purchase, or simply trying to understand where your money goes, this app makes it effortless.
