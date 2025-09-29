@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker</title>
+  <style>
+    * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+form input, form select {
+  flex: 1 1 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #0056b3;
+}
+
+.summary {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#expense-list {
+  list-style: none;
+}
+
+.expense-item {
+  background: #eee;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.expense-item span {
+  display: block;
+}
+
+.expense-actions button {
+  margin-left: 5px;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.expense-actions .edit {
+  background: #ffc107;
+}
+
+.expense-actions .delete {
+  background: #dc3545;
+  color: white;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💸 Expense Tracker</h1>
+    
+    <form id="expense-form">
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="number" id="amount" placeholder="Amount" required />
+      <select id="category" required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="Food">🍔 Food</option>
+        <option value="Transport">🚗 Transport</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Bills">💡 Bills</option>
+        <option value="Other">📦 Other</option>
+      </select>
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <div class="summary">
+      <h2>Total: ₹<span id="total">0</span></h2>
+    </div>
+
+    <ul id="expense-list"></ul>
+  </div>
+
+  <script>
+const form = document.getElementById('expense-form');
+const descriptionInput = document.getElementById('description');
+const amountInput = document.getElementById('amount');
+const categoryInput = document.getElementById('category');
+const expenseList = document.getElementById('expense-list');
+const totalDisplay = document.getElementById('total');
+
+let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+function saveExpenses() {
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+}
+
+function renderExpenses() {
+  expenseList.innerHTML = '';
+  let total = 0;
+
+  expenses.forEach((expense, index) => {
+    total += parseFloat(expense.amount);
+
+    const li = document.createElement('li');
+    li.className = 'expense-item';
+
+    li.innerHTML = `
+      <span>
+        <strong>${expense.description}</strong> - ₹${expense.amount} <br>
+        <small>${expense.category}</small>
+      </span>
+      <span class="expense-actions">
+        <button class="edit" onclick="editExpense(${index})">Edit</button>
+        <button class="delete" onclick="deleteExpense(${index})">Delete</button>
+      </span>
+    `;
+
+    expenseList.appendChild(li);
+  });
+
+  totalDisplay.textContent = total.toFixed(2);
+}
+
+function addExpense(e) {
+  e.preventDefault();
+
+  const newExpense = {
+    description: descriptionInput.value,
+    amount: parseFloat(amountInput.value),
+    category: categoryInput.value
+  };
+
+  expenses.push(newExpense);
+  saveExpenses();
+  renderExpenses();
+  form.reset();
+}
+
+function deleteExpense(index) {
+  if (confirm("Delete this expense?")) {
+    expenses.splice(index, 1);
+    saveExpenses();
+    renderExpenses();
+  }
+}
+
+function editExpense(index) {
+  const expense = expenses[index];
+
+  descriptionInput.value = expense.description;
+  amountInput.value = expense.amount;
+  categoryInput.value = expense.category;
+
+  // Remove old entry
+  expenses.splice(index, 1);
+  saveExpenses();
+  renderExpenses();
+}
+
+form.addEventListener('submit', addExpense);
+renderExpenses();
+
+  </script>
+</body>
+</html>
